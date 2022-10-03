@@ -1,34 +1,61 @@
 import { Box } from './Box/Box';
-import shortid from 'shortid';
 import { Component } from 'react';
 import { Form } from './Form/Form';
+import { Filter } from './Form/Filter';
+import { ContactList } from './Form/ContactList';
 
 export class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
+    filter: '',
   };
 
-  handleSubmit = name => {
+  handleSubmit = ({ id, name, number }) => {
     const contact = {
+      id,
       name,
+      number,
     };
-    this.setState(prevState => ({
-      contacts: [contact, ...prevState.contacts],
-    }));
-    console.log(this.state.contacts);
+
+    const contactNames = [];
+
+    this.state.contacts.map(stateContact =>
+      contactNames.push(stateContact.name)
+    );
+
+    if (!contactNames.includes(contact.name)) {
+      this.setState(prevState => ({
+        contacts: [contact, ...prevState.contacts],
+      }));
+    } else {
+      alert(contact.name + ' is already in contacts.');
+    }
   };
+
+  changeFilter = e => {
+    this.setState({ filter: e.currentTarget.value });
+  };
+
+  deleteContact = id => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
+  };
+
   render() {
+    const visibleContacts = this.state.contacts.filter(contact =>
+      contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
+    );
     return (
       <Box>
+        <h1>Phonebook</h1>
         <Form onSubmit={this.handleSubmit}></Form>
-        {this.state.contacts.map(contact => {
-          return <div key={shortid.generate()}>{contact.name}</div>;
-        })}
+        <h2>Contacts</h2>
+        <Filter value={this.state.filter} onChange={this.changeFilter}></Filter>
+        <ContactList
+          data={visibleContacts}
+          onClick={this.deleteContact}
+        ></ContactList>
       </Box>
     );
   }
