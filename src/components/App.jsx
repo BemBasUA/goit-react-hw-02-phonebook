@@ -1,8 +1,9 @@
 import { Box } from './Box/Box';
 import { Component } from 'react';
 import { Form } from './Form/Form';
-import { Filter } from './Form/Filter';
-import { ContactList } from './Form/ContactList';
+import { Filter } from './Form/Filter/Filter';
+import { ContactList } from './Form/ContactList/ContactList';
+import shortid from 'shortid';
 
 export class App extends Component {
   state = {
@@ -10,18 +11,14 @@ export class App extends Component {
     filter: '',
   };
 
-  handleSubmit = ({ id, name, number }) => {
+  handleSubmit = ({ name, number }) => {
     const contact = {
-      id,
       name,
       number,
     };
+    contact.id = shortid.generate();
 
-    const contactNames = [];
-
-    this.state.contacts.map(stateContact =>
-      contactNames.push(stateContact.name)
-    );
+    const contactNames = this.state.contacts.map(({ name }) => name);
 
     if (!contactNames.includes(contact.name)) {
       this.setState(prevState => ({

@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import shortid from 'shortid';
 
 export class Form extends Component {
   state = {
@@ -9,7 +8,7 @@ export class Form extends Component {
 
   handleChange = e => {
     const { name, value } = e.currentTarget;
-    this.setState({ id: shortid.generate(), [name]: value });
+    this.setState({ [name]: value });
   };
 
   handleSubmit = e => {
